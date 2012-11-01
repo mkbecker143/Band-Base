@@ -1,0 +1,122 @@
+
+<?php
+$mysql_hostname = "hostname"; // database config 
+$mysql_user = "username";
+$mysql_password = "password";
+$mysql_database = "database";
+$bd = mysql_connect($mysql_hostname, $mysql_user, $mysql_password) 
+or die("Something did not go correctly");
+mysql_select_db($mysql_database, $bd) or die("Something did not go correctly"); // end of database config
+
+
+
+
+
+include("config.php"); // login code 
+session_start();
+if($_SERVER["REQUEST_METHOD"] == "POST")
+{
+// Sent from Form
+$myusername=addslashes($_POST['username']); 
+$mypassword=addslashes($_POST['password']); 
+
+$sql="SELECT id FROM admin WHERE username='$myusername' and passcode='$mypassword'";
+$result=mysql_query($sql);
+$row=mysql_fetch_array($result);
+$active=$row['active'];
+$count=mysql_num_rows($result);
+
+if($count==1){
+
+session_register("myusername"); // If result = $username1 and $password1, table row has to = 1 row
+$_SESSION['login_user']= $username1;
+header("location: welcome.php"); 
+}
+else {
+$error="Your Login Name or Password is incorrect";
+	}
+}
+?>
+<form action="" method="post">
+<label>UserName :</label>
+<input type="text" name="username"/><br />
+<label>Password :</label>
+<input type="password" name="password"/><br/>
+<input type="submit" value=" Submit "/><br />
+</form>
+
+
+//welcome home page
+include('lock.php');
+?>
+<!DOCTYPE html>
+<html>
+<body>
+
+<h1 style=" text-align:right;color:white">NOT A MEMBER</h1>
+
+<input type="button" value="SIGN UP">
+
+<h1 style="text-align:center;color:white">BAND * BASE</h1>
+
+<p style="font-family:arial;color:white;font-size:20px;"> A GUIDE FOR
+YOUR LOCAL MUSIC COMMUNITY</p>
+
+
+
+
+<body style="background-color:green;">
+
+<form action="">
+Username: <input type="text" name="user" /><br />
+Password: <input type="password" name="password" />
+</form>
+
+<input type="button" value="LOG IN">
+
+<p><b></b> COPYRIGHT 2012BANDBASE ALL RIGHTS RESERVED.</p>
+<input type="button" value="ABOUT">
+<input type="button" value="TERMS">
+<input type="button" value="PRIVACY">
+<input type="button" value="HELP">
+
+</body>
+</html>
+
+
+
+include('config.php');
+session_start();
+$user_check=$_SESSION['login_user'];
+
+$ses_sql=mysql_query("select username from admin where username='$user_check' ");
+
+$row=mysql_fetch_array($ses_sql);
+
+$login_session=$row['username'];
+
+if(!isset($login_session))
+{
+header("Location: login.php");
+}
+
+
+<?php
+include('lock.php');
+?>
+<body>
+<h1>Welcome <?php echo $login_session; ?></h1>
+</body>
+
+
+
+
+<?php
+session_start();  //logout 
+if(session_destroy())
+{
+header("Location: login.php"); //end of logout
+}
+
+?>
+
